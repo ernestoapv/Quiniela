@@ -28,7 +28,7 @@ partidos.
 
 - [Next.js 14](https://nextjs.org) (App Router) + TypeScript
 - [Auth.js / NextAuth v5](https://authjs.dev) con proveedor Google
-- [Prisma](https://www.prisma.io) + SQLite (local) / Postgres (producción)
+- [Prisma](https://www.prisma.io) + PostgreSQL (local y producción)
 - Tailwind CSS
 
 ## Puesta en marcha (local)
@@ -42,10 +42,16 @@ cp .env.example .env
 #   - Genera AUTH_SECRET:  openssl rand -base64 32
 #   - Pon tus credenciales de Google OAuth (ver abajo)
 #   - Ajusta ADMIN_EMAILS con tu correo
+#   - DATABASE_URL: usa Neon (igual que producción) o un Postgres local
 
-# 3. Crear la base de datos y los partidos
-npx prisma migrate dev --name init   # crea las tablas
-npm run db:seed                       # carga los 16 partidos
+# 3a. (Opcional) Postgres local efímero, sin instalar nada extra:
+npm run db:local
+#     y deja en .env:
+#     DATABASE_URL="postgresql://postgres@127.0.0.1:5433/quiniela?schema=public"
+
+# 3b. Crear las tablas y cargar los 16 partidos
+npx prisma migrate deploy   # aplica las migraciones
+npm run db:seed             # carga los partidos (opcional: se crean solos)
 
 # 4. Arrancar
 npm run dev
@@ -66,20 +72,29 @@ npm run dev
 4. Copia el *Client ID* y *Client Secret* a `AUTH_GOOGLE_ID` y
    `AUTH_GOOGLE_SECRET` en tu `.env`.
 
-## Despliegue en Vercel (recomendado)
+## Despliegue en Vercel
 
-1. Cambia el provider en `prisma/schema.prisma` de `sqlite` a `postgresql`.
-2. Crea una base Postgres (por ejemplo [Neon](https://neon.tech) o Vercel
-   Postgres) y copia su cadena de conexión.
-3. En Vercel, define las variables de entorno:
-   - `DATABASE_URL` (Postgres)
-   - `AUTH_SECRET`
-   - `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`
-   - `ADMIN_EMAILS`
-   - `AUTH_TRUST_HOST=true`
-4. El script `build` ejecuta `prisma migrate deploy` automáticamente. Para
-   generar la primera migración de Postgres en local:
-   `npx prisma migrate dev --name init` (con `DATABASE_URL` apuntando a Postgres).
+La base ya es PostgreSQL, así que el despliegue es directo.
+
+1. **Crea la base Postgres.** En [Neon](https://neon.tech) (gratis) crea un
+   proyecto y copia la *connection string* (la que termina en `?sslmode=require`).
+2. **Importa el repo en [Vercel](https://vercel.com)** (New Project → tu repo de
+   GitHub). Vercel detecta Next.js automáticamente.
+3. **Define las variables de entorno** en Vercel (Project → Settings →
+   Environment Variables):
+   - `DATABASE_URL` → la cadena de Neon
+   - `AUTH_SECRET` → `openssl rand -base64 32`
+   - `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` → credenciales de Google
+   - `ADMIN_EMAILS` → tu correo (ej. `ernesto@agency.lat`)
+   - `AUTH_TRUST_HOST` → `true`
+4. **Deploy.** El comando `build` corre `prisma migrate deploy` y crea las
+   tablas en Neon automáticamente. Los 16 partidos se cargan solos en la
+   primera visita.
+5. **Actualiza el redirect URI de Google** con tu dominio de Vercel:
+   `https://TU-APP.vercel.app/api/auth/callback/google`.
+
+> Local y producción usan el mismo motor (Postgres), por lo que no hay que
+> cambiar nada del esquema entre uno y otro.
 
 ## Estructura
 
