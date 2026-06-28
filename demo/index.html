@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HQR — Quiniela 2026 (demo)</title>
+<style>
+:root {
+  --pitch: #0b6b3a;
+  --pitch-dark: #075028;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #64748b;
+  --faint: #94a3b8;
+  --green: #0b6b3a;
+  --green-soft-bg: #ecfdf5;
+  --green-soft-text: #047857;
+  --red-bg: #fef2f2;
+  --red-text: #b91c1c;
+  --amber-bg: #fffbeb;
+  --amber-text: #b45309;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pitch: #10894b;
+    --bg: #090e15;
+    --surface: #131a23;
+    --surface-2: #1b2531;
+    --border: #1f2a37;
+    --text: #e6eef7;
+    --muted: #94a3b8;
+    --faint: #64748b;
+    --green: #34d399;
+    --green-soft-bg: rgba(16, 137, 75, 0.18);
+    --green-soft-text: #6ee7b7;
+    --red-bg: rgba(190, 30, 30, 0.18);
+    --red-text: #fca5a5;
+    --amber-bg: rgba(180, 83, 9, 0.18);
+    --amber-text: #fcd34d;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+.app-hidden {
+  display: none;
+}
+.muted {
+  color: var(--muted);
+}
+.hint {
+  color: var(--faint);
+  font-size: 12px;
+}
+.overline {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ── Inicio de sesión ───────────────────────────────── */
+.signin {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 24px;
+}
+.signin h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 2px 0 0;
+}
+.signin .muted {
+  max-width: 420px;
+  margin: 0;
+  line-height: 1.5;
+}
+.logo-lg {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+}
+
+/* ── Barra superior ─────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.brand svg {
+  width: 28px;
+  height: 28px;
+}
+.brand-name {
+  font-size: 14px;
+}
+@media (max-width: 520px) {
+  .brand-name {
+    display: none;
+  }
+}
+.nav {
+  display: flex;
+  gap: 4px;
+}
+.tab {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tab:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.tab.active {
+  background: var(--green-soft-bg);
+  color: var(--green);
+}
+.userbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  object-fit: cover;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--faint);
+  overflow: hidden;
+}
+.link-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.link-btn:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* ── Contenedor ─────────────────────────────────────── */
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 96px;
+}
+.page-head {
+  margin-bottom: 18px;
+}
+.page-head h2 {
+  margin: 4px 0 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.meta-row {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.status {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+.status.open {
+  background: var(--green-soft-bg);
+  color: var(--green-soft-text);
+}
+.status.closed {
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+.accent {
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* ── Tarjeta de partido ─────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.match-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.num {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.vs {
+  color: var(--faint);
+  font-weight: 500;
+}
+.tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.pts-tag {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.pts-tag.win {
+  background: var(--green-soft-bg);
+  color: var(--green-soft-text);
+}
+.pts-tag.zero {
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.opt {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 8px 6px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.12s ease;
+}
+.opt .kicker {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.opt .team {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.opt:not(.locked):hover {
+  border-color: color-mix(in srgb, var(--green) 60%, var(--border));
+  background: var(--green-soft-bg);
+}
+.opt.selected {
+  border-color: var(--green);
+  background: var(--green-soft-bg);
+  color: var(--green-soft-text);
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+.opt.locked {
+  cursor: default;
+}
+.opt.correct {
+  border-color: var(--green);
+  background: var(--green-soft-bg);
+  color: var(--green-soft-text);
+}
+.opt.wrong {
+  border-color: color-mix(in srgb, var(--red-text) 50%, var(--border));
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+.opt.is-result {
+  border-color: color-mix(in srgb, var(--green) 50%, var(--border));
+  color: var(--green-soft-text);
+}
+.opt.dim {
+  color: var(--faint);
+}
+
+/* ── Barra de guardar ───────────────────────────────── */
+.savebar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 14px;
+  width: calc(100% - 32px);
+  max-width: 608px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.savebar .msg {
+  font-size: 14px;
+  color: var(--muted);
+}
+.btn {
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 18px;
+  cursor: pointer;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.btn-primary {
+  background: var(--pitch);
+  color: #fff;
+}
+.btn-amber {
+  background: #d97706;
+  color: #fff;
+}
+.btn-green {
+  background: #059669;
+  color: #fff;
+}
+
+.notice {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+
+/* ── Tabla de posiciones ────────────────────────────── */
+.legend {
+  margin-top: 12px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+.legend b {
+  color: var(--text);
+}
+.standing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+}
+.standing.me {
+  border-color: color-mix(in srgb, var(--green) 45%, var(--border));
+  background: var(--green-soft-bg);
+}
+.rank {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--faint);
+  border-radius: 999px;
+}
+.rank.medal {
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.rank.m1 {
+  background: #fef3c7;
+  color: #b45309;
+}
+.rank.m2 {
+  background: #e2e8f0;
+  color: #475569;
+}
+.rank.m3 {
+  background: #ffedd5;
+  color: #c2410c;
+}
+.who {
+  min-width: 0;
+  flex: 1;
+}
+.who .name {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.who .sub {
+  font-size: 12px;
+  color: var(--faint);
+}
+.me-badge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--green);
+  background: var(--green-soft-bg);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 6px;
+}
+.pts {
+  text-align: right;
+  flex: none;
+}
+.pts .n {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+.pts .u {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+}
+.empty {
+  border: 1px dashed var(--border);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* ── Admin ──────────────────────────────────────────── */
+.admin-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.res-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.res-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 10px;
+  padding: 8px 6px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.res-btn:hover {
+  border-color: color-mix(in srgb, var(--green) 60%, var(--border));
+  background: var(--green-soft-bg);
+}
+.res-btn.active {
+  border-color: var(--green);
+  background: var(--green-soft-bg);
+  color: var(--green-soft-text);
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+.res-clear {
+  margin-top: 8px;
+}
+.res-btn.full {
+  width: 100%;
+}
+.toast {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 40;
+}
+.toast.show {
+  opacity: 1;
+}
+
+/* ── Chips de etapa ──────────────────────────────────── */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  margin: -2px -2px 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.chips::-webkit-scrollbar { height: 0; }
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.chip:hover { border-color: color-mix(in srgb, var(--green) 50%, var(--border)); }
+.chip.active {
+  border-color: var(--green);
+  background: var(--green-soft-bg);
+  color: var(--green-soft-text);
+}
+.chip .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--faint); }
+.chip .dot.open { background: #16a34a; }
+.chip .dot.closed { background: var(--faint); }
+
+/* ── Tarjeta "por definir" ───────────────────────────── */
+.card.tbd { opacity: 0.75; }
+.notice.info {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+/* ── Admin por etapas ───────────────────────────────── */
+.stage-sec { margin-bottom: 22px; }
+.stage-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 10px;
+}
+.stage-title { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+
+/* Ocultar avatar en pantallas muy chicas para que quepa la barra */
+@media (max-width: 430px) {
+  .userbox .avatar { display: none; }
+}
+
+
+.demo-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:50;background:var(--text);color:var(--bg);font-size:12px;font-weight:600;padding:7px 14px;border-radius:999px;display:flex;gap:8px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.demo-bar .dt{background:var(--green);color:#fff;border-radius:5px;padding:1px 6px;font-size:10px;letter-spacing:.06em}
+.demo-bar select{font:inherit;border:0;border-radius:6px;padding:3px 6px}
+
+</style>
+</head>
+<body>
+<div id="app" class="app-hidden"></div>
+<main id="signin" class="signin">
+  <svg class="logo-lg" viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0b6b3a" /><text x="18" y="24" font-size="14" font-weight="800" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif">HQR</text></svg>
+  <p class="overline">Bracket del Mundial · 2026</p>
+  <h1>HQR</h1>
+  <p class="muted">Cargando demo…</p>
+  <div id="gbtn"></div>
+  <p id="signin-msg" class="hint"></p>
+</main>
+<script>
+/* ── Harness de DEMO: datos en memoria, sin Google ni backend ── */
+(function () {
+  function range(a,b){var r=[];for(var i=a;i<=b;i++)r.push(i);return r;}
+  var SEED16=[["Sudáfrica","Canadá"],["Brasil","Japón"],["Alemania","Paraguay"],["Países Bajos","Marruecos"],["Costa de Marfil","Noruega"],["Francia","Suecia"],["México","Ecuador"],["Inglaterra","Congo"],["Estados Unidos","Bosnia"],["Bélgica","Senegal"],["España","Austria"],["Portugal","Croacia"],["Suiza","Argelia"],["Australia","Egipto"],["Argentina","Cabo Verde"],["Colombia","Ghana"]];
+  var STAGES=[{key:"16avos",label:"16avos de final",orders:range(1,16)},{key:"octavos",label:"Octavos de final",orders:range(17,24)},{key:"cuartos",label:"Cuartos de final",orders:range(25,28)},{key:"semis",label:"Semifinales",orders:range(29,30)},{key:"tercer",label:"Tercer lugar",orders:[32]},{key:"final",label:"Final",orders:[31]}];
+  function advanceMap(){var m={};for(var j=1;j<=8;j++)m[16+j]={A:{src:2*j-1,take:"W"},B:{src:2*j,take:"W"}};for(var k=1;k<=4;k++)m[24+k]={A:{src:16+(2*k-1),take:"W"},B:{src:16+2*k,take:"W"}};for(var s=1;s<=2;s++)m[28+s]={A:{src:24+(2*s-1),take:"W"},B:{src:24+2*s,take:"W"}};m[31]={A:{src:29,take:"W"},B:{src:30,take:"W"}};m[32]={A:{src:29,take:"L"},B:{src:30,take:"L"}};return m;}
+
+  var matches={};
+  SEED16.forEach(function(t,i){matches[i+1]={order:i+1,stage:"16avos",teamA:t[0],teamB:t[1],result:null};});
+  for(var o=17;o<=24;o++)matches[o]={order:o,stage:"octavos",teamA:"",teamB:"",result:null};
+  for(var o2=25;o2<=28;o2++)matches[o2]={order:o2,stage:"cuartos",teamA:"",teamB:"",result:null};
+  matches[29]={order:29,stage:"semis",teamA:"",teamB:"",result:null};matches[30]={order:30,stage:"semis",teamA:"",teamB:"",result:null};
+  matches[31]={order:31,stage:"final",teamA:"",teamB:"",result:null};matches[32]={order:32,stage:"tercer",teamA:"",teamB:"",result:null};
+  var stageOpen={"16avos":false,octavos:true,cuartos:false,semis:false,tercer:false,final:false};
+
+  var USERS={"moto@hqr.demo":{name:"Moto",admin:true},"pacha@hqr.demo":{name:"Pacha",admin:false},"tiopesca@hqr.demo":{name:"TíoPesca",admin:false},"netito@hqr.demo":{name:"Netito",admin:false},"chuyin@hqr.demo":{name:"Chuyin",admin:false}};
+  var names={"moto@hqr.demo":"Moto","pacha@hqr.demo":"Pacha","tiopesca@hqr.demo":"TíoPesca","netito@hqr.demo":"Netito","chuyin@hqr.demo":"Chuyin"};
+  var preds={};
+
+  function winnerOf(c){return c==="A"||c==="AP"?"A":c==="B"||c==="BP"?"B":null;}
+  function isPen(c){return c==="AP"||c==="BP";}
+  function scoreFor(p,r){if(!r||!p)return 0;var s=0,w=winnerOf(p);if(w&&w===winnerOf(r))s+=1;if(isPen(p)&&p===r)s+=0.5;return s;}
+  function recompute(){var map=advanceMap();for(var o=17;o<=32;o++){var sp=map[o];function tf(x){var m=matches[x.src];if(!m||!m.result)return "";var w=winnerOf(m.result);var win=w==="A"?m.teamA:m.teamB,los=w==="A"?m.teamB:m.teamA;return x.take==="W"?win:los;}matches[o].teamA=tf(sp.A);matches[o].teamB=tf(sp.B);}}
+
+  ["A","B","AP","BP","A","B","AP","B","A","B","A","B","A","B","A","B"].forEach(function(r,i){matches[i+1].result=r;});
+  recompute();
+  preds["moto@hqr.demo"]={1:"A",2:"B",3:"AP",4:"BP",5:"A",6:"B",7:"AP",8:"B",9:"A",10:"B",17:"A",18:"AP"};
+  preds["pacha@hqr.demo"]={1:"A",2:"B",3:"A",4:"BP",5:"B",6:"B",7:"AP",8:"B",17:"B"};
+  preds["tiopesca@hqr.demo"]={1:"B",2:"B",3:"AP",4:"B",5:"A",6:"A",7:"AP",8:"B",9:"A"};
+  preds["netito@hqr.demo"]={1:"A",2:"A",3:"A",4:"A",5:"A",6:"A",7:"A",8:"A"};
+  preds["chuyin@hqr.demo"]={1:"A",2:"B",3:"AP",4:"B",5:"A",6:"B",7:"A",8:"B",17:"A"};
+
+  function decode(token){try{return JSON.parse(decodeURIComponent(escape(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")))));}catch(e){return null;}}
+  function leaderboard(){var rows=[];Object.keys(preds).forEach(function(email){var pr=preds[email],pts=0,filled=0;for(var o=1;o<=32;o++){if(pr[o])filled++;pts+=scoreFor(pr[o],matches[o].result);}if(filled>0)rows.push({email:email,name:names[email]||email,points:pts,filled:filled});});rows.sort(function(a,b){return b.points-a.points||a.name.localeCompare(b.name);});return rows;}
+  function stageKeyOf(order){for(var i=0;i<STAGES.length;i++)if(STAGES[i].orders.indexOf(Number(order))>=0)return STAGES[i].key;return null;}
+
+  function route(b){
+    var u=decode(b.idToken); if(!u)return {ok:false,needLogin:true,error:"auth"};
+    var isAdmin=!!(USERS[u.email]&&USERS[u.email].admin);
+    if(b.action==="state"){
+      var stages=STAGES.map(function(st){return {key:st.key,label:st.label,isOpen:stageOpen[st.key]===true,matches:st.orders.map(function(o){return {order:o,teamA:matches[o].teamA,teamB:matches[o].teamB,result:matches[o].result};})};});
+      return {ok:true,user:u,isAdmin:isAdmin,tournamentName:"HQR — Quiniela 2026",stages:stages,myPredictions:preds[u.email]||{},leaderboard:leaderboard()};
+    }
+    if(b.action==="save"){var cur=Object.assign({},preds[u.email]||{});Object.keys(b.predictions||{}).forEach(function(o){var k=stageKeyOf(o);if(k&&stageOpen[k])cur[o]=b.predictions[o];});preds[u.email]=cur;names[u.email]=u.name;return {ok:true};}
+    if(b.action==="setResult"){if(!isAdmin)return{ok:false,error:"forbidden"};matches[Number(b.order)].result=b.result||null;recompute();return {ok:true};}
+    if(b.action==="setStageOpen"){if(!isAdmin)return{ok:false,error:"forbidden"};stageOpen[b.stage]=!!b.open;return {ok:true};}
+    return {ok:false,error:"unknown"};
+  }
+
+  var realFetch=window.fetch;
+  window.fetch=function(url,opts){if(String(url).indexOf("demo.local")>=0){var out=route(JSON.parse(opts.body));return Promise.resolve(new Response(JSON.stringify(out),{status:200,headers:{"Content-Type":"application/json"}}));}return realFetch.apply(this,arguments);};
+
+  function b64url(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+  function jwt(email){var u=USERS[email];return "h."+b64url(JSON.stringify({email:email,name:u.name,picture:""}))+".s";}
+  var CURRENT="moto@hqr.demo";
+  window.google={accounts:{id:{initialize:function(o){window.__cb=o.callback;setTimeout(function(){window.__cb({credential:jwt(CURRENT)});},0);},renderButton:function(){},prompt:function(){},disableAutoSelect:function(){}}}};
+  window.QUINIELA_CONFIG={GAS_URL:"https://demo.local/exec",GOOGLE_CLIENT_ID:"demo"};
+
+  window.addEventListener("DOMContentLoaded",function(){
+    var bar=document.createElement("div");bar.className="demo-bar";
+    bar.innerHTML='<span class="dt">DEMO</span> Ver como: <select id="demo-user">'+Object.keys(USERS).map(function(e){return '<option value="'+e+'">'+USERS[e].name+(USERS[e].admin?" (admin)":"")+"</option>";}).join("")+"</select>";
+    document.body.appendChild(bar);
+    document.getElementById("demo-user").addEventListener("change",function(e){CURRENT=e.target.value;if(window.__cb)window.__cb({credential:jwt(CURRENT)});});
+  });
+})();
+</script>
+<script>/* Quiniela "Hay que revolverle" — frontend estático (bracket completo).
+   Habla con el backend de Apps Script (Google Sheets) por POST. */
+
+(function () {
+  "use strict";
+
+  var CFG = window.QUINIELA_CONFIG || {};
+  var ID_TOKEN = null;
+  var PROFILE = null;
+  var STATE = null;
+  var VIEW = "quiniela";
+  var QSTAGE = null; // etapa seleccionada en "Mi quiniela"
+  var SELECTIONS = {}; // { order: choice }
+
+  var appEl = document.getElementById("app");
+  var signinEl = document.getElementById("signin");
+  var ORD = ["A", "B", "AP", "BP"];
+
+  // ── Puntaje (debe coincidir con apps-script/Code.gs) ──────────
+  function winnerOf(c) { return c === "A" || c === "AP" ? "A" : c === "B" || c === "BP" ? "B" : null; }
+  function isPenales(c) { return c === "AP" || c === "BP"; }
+  function scoreFor(p, r) {
+    if (!r || !p) return 0;
+    var s = 0, w = winnerOf(p);
+    if (w && w === winnerOf(r)) s += 1;
+    if (isPenales(p) && p === r) s += 0.5;
+    return s;
+  }
+  function formatPoints(n) { return n % 1 === 0 ? String(n) : n.toFixed(1); }
+  function kicker(c) { return isPenales(c) ? "En penales" : "Gana"; }
+  function choiceTeam(c, m) { return winnerOf(c) === "A" ? m.teamA : m.teamB; }
+  function resultLabel(r, m) {
+    if (r === "A") return m.teamA;
+    if (r === "B") return m.teamB;
+    if (r === "AP") return m.teamA + " (penales)";
+    if (r === "BP") return m.teamB + " (penales)";
+    return "—";
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function initial(name) { return (String(name).trim().charAt(0) || "?").toUpperCase(); }
+  function ready(m) { return !!(m.teamA && m.teamB); }
+
+  // ── API ───────────────────────────────────────────────────────
+  async function api(action, params) {
+    var body = Object.assign({ action: action, idToken: ID_TOKEN }, params || {});
+    var res = await fetch(CFG.GAS_URL, { method: "POST", body: JSON.stringify(body) });
+    var data = await res.json();
+    if (data && data.needLogin) {
+      ID_TOKEN = null;
+      showSignin("Tu sesión expiró. Vuelve a entrar con Google.");
+      throw new Error("needLogin");
+    }
+    return data;
+  }
+
+  // ── Google Sign-In ────────────────────────────────────────────
+  function decodeJwt(token) {
+    try {
+      var p = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      var json = decodeURIComponent(atob(p).split("").map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(""));
+      return JSON.parse(json);
+    } catch (e) { return {}; }
+  }
+  function onCredential(response) {
+    ID_TOKEN = response.credential;
+    var p = decodeJwt(ID_TOKEN);
+    PROFILE = { email: p.email, name: p.name || p.email, picture: p.picture || "" };
+    load();
+  }
+  function initGis() {
+    if (!window.google || !google.accounts || !google.accounts.id) return setTimeout(initGis, 200);
+    if (!CFG.GOOGLE_CLIENT_ID || CFG.GOOGLE_CLIENT_ID.indexOf("PEGA_AQUI") === 0) {
+      document.getElementById("signin-msg").textContent = "Falta configurar GOOGLE_CLIENT_ID en config.js";
+      return;
+    }
+    google.accounts.id.initialize({ client_id: CFG.GOOGLE_CLIENT_ID, callback: onCredential, auto_select: true });
+    google.accounts.id.renderButton(document.getElementById("gbtn"), { theme: "outline", size: "large", text: "signin_with", shape: "pill", locale: "es" });
+    google.accounts.id.prompt();
+  }
+  function signOut() {
+    if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
+    ID_TOKEN = null; PROFILE = null; STATE = null;
+    showSignin("");
+  }
+  function showSignin(msg) {
+    appEl.classList.add("app-hidden"); appEl.innerHTML = "";
+    signinEl.style.display = "flex";
+    var m = document.getElementById("signin-msg");
+    if (m) m.textContent = msg || "";
+  }
+
+  // ── Carga de estado ───────────────────────────────────────────
+  async function load() {
+    try {
+      var data = await api("state");
+      if (!data.ok) { showSignin("No se pudo cargar (" + (data.error || "error") + ")."); return; }
+      STATE = data;
+      SELECTIONS = Object.assign({}, data.myPredictions || {});
+      if (!QSTAGE || !stageByKey(QSTAGE)) QSTAGE = defaultStageKey();
+      signinEl.style.display = "none";
+      appEl.classList.remove("app-hidden");
+      render();
+    } catch (e) { /* needLogin manejado */ }
+  }
+
+  function stageByKey(k) { return (STATE.stages || []).filter(function (s) { return s.key === k; })[0]; }
+  function defaultStageKey() {
+    var open = (STATE.stages || []).filter(function (s) { return s.isOpen; })[0];
+    return (open || STATE.stages[0]).key;
+  }
+  function allMatches() {
+    var out = [];
+    (STATE.stages || []).forEach(function (s) { s.matches.forEach(function (m) { out.push(m); }); });
+    return out;
+  }
+
+  // ── Render ─────────────────────────────────────────────────────
+  function render() { appEl.innerHTML = topbar() + view(); }
+
+  function topbar() {
+    var av = PROFILE && PROFILE.picture
+      ? '<img class="avatar" src="' + escapeHtml(PROFILE.picture) + '" alt="" referrerpolicy="no-referrer">'
+      : '<span class="avatar">' + initial(PROFILE ? PROFILE.name : "?") + "</span>";
+    var tabs = tab("quiniela", "Mi quiniela") + tab("posiciones", "Posiciones") + (STATE.isAdmin ? tab("admin", "Admin") : "");
+    return '<header class="topbar"><div class="topbar-inner">' +
+      '<span class="brand">' + logoSvg() + '<span class="brand-name">HQR</span></span>' +
+      '<nav class="nav">' + tabs + "</nav>" +
+      '<span class="userbox">' + av + '<button class="link-btn" data-act="signout">Salir</button></span>' +
+      "</div></header>";
+  }
+  function tab(v, label) { return '<button class="tab ' + (VIEW === v ? "active" : "") + '" data-view="' + v + '">' + label + "</button>"; }
+  function logoSvg() {
+    return '<svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0b6b3a"/>' +
+      '<text x="18" y="24" font-size="14" font-weight="800" text-anchor="middle" fill="#fff" font-family="Inter, Arial, sans-serif">HQR</text></svg>';
+  }
+
+  function view() {
+    if (VIEW === "posiciones") return viewPosiciones();
+    if (VIEW === "admin" && STATE.isAdmin) return viewAdmin();
+    return viewQuiniela();
+  }
+
+  // ── Mi quiniela ────────────────────────────────────────────────
+  function viewQuiniela() {
+    var matches = allMatches();
+    var points = 0, resolved = 0, filled = 0;
+    matches.forEach(function (m) {
+      if (SELECTIONS[m.order]) filled++;
+      if (m.result) { resolved++; points += scoreFor(SELECTIONS[m.order], m.result); }
+    });
+
+    var head = '<div class="page-head"><p class="overline">Bracket del torneo</p>' +
+      "<h2>" + escapeHtml(STATE.tournamentName) + "</h2>" +
+      '<div class="meta-row"><span>' + filled + " pronósticos</span>" +
+      (resolved > 0 ? '<span class="accent">' + formatPoints(points) + (points === 1 ? " punto" : " puntos") + "</span>" : "") +
+      "</div></div>";
+
+    var chips = '<div class="chips">' + STATE.stages.map(function (s) {
+      var dot = s.isOpen ? "open" : "closed";
+      return '<button class="chip ' + (s.key === QSTAGE ? "active" : "") + '" data-stage-tab="' + s.key + '">' +
+        '<span class="dot ' + dot + '"></span>' + escapeHtml(s.label) + "</button>";
+    }).join("") + "</div>";
+
+    var stage = stageByKey(QSTAGE);
+    var cards = stage.matches.map(function (m) { return matchCard(m, stage); }).join("");
+
+    var canEdit = stage.isOpen && stage.matches.some(ready);
+    var footer = canEdit
+      ? '<div class="savebar"><span class="msg" id="save-msg">Marca tus resultados y guarda.</span><button class="btn btn-primary" data-act="save">Guardar</button></div>'
+      : stage.isOpen
+        ? '<p class="notice info">Esta etapa abrirá cuando se definan los equipos de la ronda anterior.</p>'
+        : '<p class="notice">Esta etapa está cerrada. No puedes modificar tus pronósticos.</p>';
+
+    return '<main class="container">' + head + chips + cards + footer + "</main>";
+  }
+
+  function matchCard(m, stage) {
+    var editable = stage.isOpen && ready(m);
+
+    if (!ready(m)) {
+      return '<div class="card tbd"><div class="match-head"><span class="num">' + m.order + "</span>" +
+        '<span class="muted">Por definir</span></div>' +
+        '<div class="grid2">' + ORD.map(function (c) {
+          return '<div class="opt locked dim"><span class="kicker">' + kicker(c) + '</span><span class="team">—</span></div>';
+        }).join("") + "</div></div>";
+    }
+
+    var pick = SELECTIONS[m.order];
+    var winnerCorrect = m.result ? winnerOf(pick) === winnerOf(m.result) : false;
+    var pts = m.result ? scoreFor(pick, m.result) : 0;
+    var badge = m.result
+      ? '<span class="right"><span class="tag">Resultado: ' + escapeHtml(resultLabel(m.result, m)) + "</span>" +
+        '<span class="pts-tag ' + (pts > 0 ? "win" : "zero") + '">+' + formatPoints(pts) + "</span></span>"
+      : "";
+
+    var opts = ORD.map(function (c) {
+      var cls = optClass(c, m, pick, editable, winnerCorrect);
+      var attrs = editable ? ' data-order="' + m.order + '" data-choice="' + c + '"' : "";
+      return '<div class="' + cls + '"' + attrs + '><span class="kicker">' + kicker(c) + "</span>" +
+        '<span class="team">' + escapeHtml(choiceTeam(c, m)) + "</span></div>";
+    }).join("");
+
+    return '<div class="card"><div class="match-head"><span class="num">' + m.order + "</span>" +
+      "<span>" + escapeHtml(m.teamA) + '</span><span class="vs">vs</span><span>' + escapeHtml(m.teamB) + "</span>" +
+      badge + '</div><div class="grid2">' + opts + "</div></div>";
+  }
+
+  function optClass(c, m, pick, editable, winnerCorrect) {
+    var base = "opt";
+    var selected = pick === c;
+    if (editable) return base + (selected ? " selected" : "");
+    base += " locked";
+    if (selected && m.result && winnerCorrect) return base + " correct";
+    if (selected && m.result && !winnerCorrect) return base + " wrong";
+    if (selected) return base + " selected";
+    if (m.result === c) return base + " is-result";
+    return base + " dim";
+  }
+
+  // ── Posiciones ─────────────────────────────────────────────────
+  function viewPosiciones() {
+    var lb = STATE.leaderboard || [];
+    var matches = allMatches();
+    var total = matches.length;
+    var resolved = matches.filter(function (m) { return m.result; }).length;
+
+    var head = '<div class="page-head"><p class="overline">Tabla de posiciones</p><h2>Clasificación general</h2>' +
+      '<p class="muted" style="margin:8px 0 0;font-size:14px">' + resolved + " de " + total + " partidos definidos.</p>" +
+      '<p class="legend"><b>Puntos:</b> 1 por acertar al ganador · <span class="accent">+0.5</span> si aciertas que ganó en penales</p></div>';
+
+    if (!lb.length) return '<main class="container">' + head + '<div class="empty">Aún no hay participantes con pronósticos.</div></main>';
+
+    var rows = lb.map(function (r, i) {
+      var me = PROFILE && String(r.email).toLowerCase() === String(PROFILE.email).toLowerCase();
+      var rank = i + 1, rankCls = rank <= 3 ? "rank medal m" + rank : "rank";
+      return '<div class="standing ' + (me ? "me" : "") + '"><span class="' + rankCls + '">' + rank + "</span>" +
+        '<span class="avatar">' + initial(r.name) + '</span><div class="who"><div class="name">' + escapeHtml(r.name) +
+        (me ? '<span class="me-badge">Tú</span>' : "") + '</div><div class="sub">' + r.filled + " pronósticos</div></div>" +
+        '<div class="pts"><div class="n">' + formatPoints(r.points) + '</div><div class="u">pts</div></div></div>';
+    }).join("");
+
+    return '<main class="container">' + head + rows + "</main>";
+  }
+
+  // ── Admin ──────────────────────────────────────────────────────
+  function viewAdmin() {
+    var head = '<div class="page-head"><h2>Administración</h2>' +
+      '<p class="muted" style="margin:6px 0 0;font-size:14px">Abre o cierra cada etapa y registra los resultados. Los ganadores avanzan solos a la siguiente llave.</p></div>';
+
+    var sections = STATE.stages.map(function (st) {
+      var toggle = '<button class="btn ' + (st.isOpen ? "btn-amber" : "btn-green") + ' btn-sm" data-act="stage-toggle" data-stage="' + st.key + '" data-open="' + (!st.isOpen) + '">' +
+        (st.isOpen ? "Cerrar" : "Abrir") + "</button>";
+      var header = '<div class="stage-head"><div><span class="stage-title">' + escapeHtml(st.label) + "</span> " +
+        '<span class="status ' + (st.isOpen ? "open" : "closed") + '">' + (st.isOpen ? "Abierta" : "Cerrada") + "</span></div>" + toggle + "</div>";
+
+      var cards = st.matches.map(function (m) {
+        if (!ready(m)) {
+          return '<div class="card tbd"><div class="match-head"><span class="num">' + m.order + '</span><span class="muted">Por definir (esperando ronda anterior)</span></div></div>';
+        }
+        function rb(val, label) {
+          return '<button class="res-btn ' + (m.result === val ? "active" : "") + '" data-act="result" data-order="' + m.order + '" data-result="' + val + '">' + escapeHtml(label) + "</button>";
+        }
+        return '<div class="card"><div class="match-head"><span class="num">' + m.order + "</span>" +
+          "<span>" + escapeHtml(m.teamA) + '</span><span class="vs">vs</span><span>' + escapeHtml(m.teamB) + "</span></div>" +
+          '<div class="res-grid">' + rb("A", "Gana " + m.teamA) + rb("B", "Gana " + m.teamB) +
+          rb("AP", m.teamA + " en penales") + rb("BP", m.teamB + " en penales") + "</div>" +
+          '<div class="res-clear"><button class="res-btn full ' + (!m.result ? "active" : "") + '" data-act="result" data-order="' + m.order + '" data-result="">Limpiar resultado</button></div></div>';
+      }).join("");
+
+      return '<section class="stage-sec">' + header + cards + "</section>";
+    }).join("");
+
+    return '<main class="container">' + head + sections + "</main>";
+  }
+
+  // ── Eventos ────────────────────────────────────────────────────
+  document.addEventListener("click", async function (ev) {
+    var t = ev.target.closest("[data-view],[data-act],[data-choice],[data-stage-tab]");
+    if (!t) return;
+
+    if (t.hasAttribute("data-view")) { VIEW = t.getAttribute("data-view"); render(); return; }
+    if (t.hasAttribute("data-stage-tab")) { QSTAGE = t.getAttribute("data-stage-tab"); render(); return; }
+
+    if (t.hasAttribute("data-choice")) {
+      var order = t.getAttribute("data-order");
+      SELECTIONS[order] = t.getAttribute("data-choice");
+      Array.prototype.forEach.call(t.parentNode.children, function (ch) { ch.classList.toggle("selected", ch === t); });
+      var msg = document.getElementById("save-msg");
+      if (msg) msg.textContent = "Cambios sin guardar.";
+      return;
+    }
+
+    var act = t.getAttribute("data-act");
+    if (act === "signout") return signOut();
+
+    if (act === "save") {
+      t.disabled = true;
+      var sm = document.getElementById("save-msg");
+      if (sm) sm.textContent = "Guardando…";
+      try {
+        var r = await api("save", { predictions: SELECTIONS });
+        if (r.ok) { if (sm) sm.textContent = "✅ Pronósticos guardados"; toast("Guardado"); }
+        else if (sm) sm.textContent = "⚠️ " + (r.error || "Error");
+      } catch (e) {}
+      t.disabled = false;
+      return;
+    }
+
+    if (act === "stage-toggle") {
+      t.disabled = true;
+      var r1 = await api("setStageOpen", { stage: t.getAttribute("data-stage"), open: t.getAttribute("data-open") === "true" });
+      if (r1.ok) await load();
+      return;
+    }
+
+    if (act === "result") {
+      var r2 = await api("setResult", { order: t.getAttribute("data-order"), result: t.getAttribute("data-result") });
+      if (r2.ok) { await load(); toast("Resultado guardado · ganadores avanzados"); }
+      return;
+    }
+  });
+
+  function toast(text) {
+    var el = document.createElement("div");
+    el.className = "toast"; el.textContent = text;
+    document.body.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add("show"); });
+    setTimeout(function () { el.classList.remove("show"); setTimeout(function () { el.remove(); }, 250); }, 1800);
+  }
+
+  // ── Arranque ───────────────────────────────────────────────────
+  if (!CFG.GAS_URL || CFG.GAS_URL.indexOf("PEGA_AQUI") === 0) {
+    document.getElementById("signin-msg").textContent = "Falta configurar GAS_URL en config.js";
+  }
+  initGis();
+})();
+</script>
+</body>
+</html>

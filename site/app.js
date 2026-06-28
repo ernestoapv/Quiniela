@@ -1,4 +1,4 @@
-/* Quiniela "Hay que revolverle" — frontend estático (bracket completo).
+/* HQR — Quiniela 2026 — frontend estático (bracket completo).
    Habla con el backend de Apps Script (Google Sheets) por POST. */
 
 (function () {
@@ -127,15 +127,15 @@
       : '<span class="avatar">' + initial(PROFILE ? PROFILE.name : "?") + "</span>";
     var tabs = tab("quiniela", "Mi quiniela") + tab("posiciones", "Posiciones") + (STATE.isAdmin ? tab("admin", "Admin") : "");
     return '<header class="topbar"><div class="topbar-inner">' +
-      '<span class="brand">' + logoSvg() + '<span class="brand-name">Hay que revolverle</span></span>' +
+      '<span class="brand">' + logoSvg() + '<span class="brand-name">HQR</span></span>' +
       '<nav class="nav">' + tabs + "</nav>" +
       '<span class="userbox">' + av + '<button class="link-btn" data-act="signout">Salir</button></span>' +
       "</div></header>";
   }
   function tab(v, label) { return '<button class="tab ' + (VIEW === v ? "active" : "") + '" data-view="' + v + '">' + label + "</button>"; }
   function logoSvg() {
-    return '<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0b6b3a"/>' +
-      '<circle cx="16" cy="16" r="9" fill="#fff"/><path d="M16 9.2l3.1 2.25-1.18 3.65h-3.84L12.9 11.45 16 9.2z" fill="#075028"/></svg>';
+    return '<svg viewBox="0 0 36 36" aria-hidden="true"><rect width="36" height="36" rx="10" fill="#0b6b3a"/>' +
+      '<text x="18" y="24" font-size="14" font-weight="800" text-anchor="middle" fill="#fff" font-family="Inter, Arial, sans-serif">HQR</text></svg>';
   }
 
   function view() {

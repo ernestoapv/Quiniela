@@ -1,5 +1,5 @@
 /**
- * Quiniela "Hay que revolverle" — Backend en Google Apps Script.
+ * HQR — Quiniela 2026 — Backend en Google Apps Script.
  *
  * Maneja TODO el bracket del torneo (16avos → octavos → cuartos → semis →
  * 3er lugar → final). Los ganadores avanzan automáticamente a la siguiente
@@ -17,7 +17,7 @@
 // ── Configuración ───────────────────────────────────────────────
 var CLIENT_ID = 'PEGA_AQUI_TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
 var ADMIN_EMAILS = ['ernesto@agency.lat'];
-var TOURNAMENT_NAME = 'Hay que revolverle — Quiniela 2026';
+var TOURNAMENT_NAME = 'HQR — Quiniela 2026';
 
 // Partidos de la primera ronda (16avos). El resto del bracket se llena solo.
 var SEED_16 = [

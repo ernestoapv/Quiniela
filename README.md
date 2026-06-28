@@ -1,4 +1,4 @@
-# Hay que revolverle — Quiniela 2026 ⚽
+# HQR — Quiniela 2026 ⚽
 
 Quiniela del Mundial con **todo el bracket** (16avos → octavos → cuartos →
 semifinales → 3er lugar → final). Los participantes entran con **Google**,
@@ -23,6 +23,7 @@ site/                Frontend para subir a Hostinger (public_html)
 apps-script/
   Code.gs            Backend (se pega en Apps Script)
   appsscript.json    Permisos del proyecto
+demo/                Mockup funcional autónomo (abre demo/index.html)
 legacy-nextjs/       Versión anterior en Next.js (no se usa; se conserva)
 ```
 
