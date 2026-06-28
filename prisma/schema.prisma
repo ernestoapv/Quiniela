@@ -1,0 +1,92 @@
+// Para producción (Postgres en Vercel/Neon) cambia provider a "postgresql".
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── Modelos de Auth.js (NextAuth) ───────────────────────────────
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  predictions   Prediction[]
+  createdAt     DateTime     @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ── Modelos de la quiniela ──────────────────────────────────────
+model Tournament {
+  id        String   @id @default(cuid())
+  name      String
+  isClosed  Boolean  @default(false)
+  matches   Match[]
+  createdAt DateTime @default(now())
+}
+
+model Match {
+  id           String       @id @default(cuid())
+  order        Int
+  teamA        String
+  teamB        String
+  // Resultado real registrado por el admin: "A" | "B" | "X" | null
+  result       String?
+  tournamentId String
+  tournament   Tournament   @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  predictions  Prediction[]
+
+  @@index([tournamentId])
+}
+
+model Prediction {
+  id      String @id @default(cuid())
+  userId  String
+  matchId String
+  // Pronóstico del usuario: "A" | "B" | "X"
+  choice  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  match   Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, matchId])
+  @@index([matchId])
+}
