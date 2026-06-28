@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { SEED_MATCHES, TOURNAMENT_NAME } from "@/lib/matches";
+import { SEED_MATCHES, TOURNAMENT_NAME, scoreFor } from "@/lib/matches";
 import type { Match, Tournament } from "@prisma/client";
 
 export type TournamentWithMatches = Tournament & { matches: Match[] };
@@ -72,7 +72,7 @@ export async function getLeaderboard(): Promise<{
         const result = resultByMatch[p.matchId];
         if (!result) continue;
         played += 1;
-        if (p.choice === result) points += 1;
+        points += scoreFor(p.choice, result);
       }
       return {
         userId: u.id,

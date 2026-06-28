@@ -5,8 +5,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getTournament } from "@/lib/quiniela";
 
-const VALID_CHOICES = new Set(["A", "B", "X"]);
-const VALID_RESULTS = new Set(["A", "B", "X", ""]);
+const VALID_CHOICES = new Set(["A", "B", "AP", "BP"]);
+const VALID_RESULTS = new Set(["A", "B", "AP", "BP", ""]);
 
 // ── Usuario: guardar sus pronósticos ────────────────────────────
 export async function savePredictions(formData: FormData) {

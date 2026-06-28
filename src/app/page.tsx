@@ -4,6 +4,7 @@ import { NavBar } from "@/components/NavBar";
 import { SignInButton } from "@/components/AuthButtons";
 import { QuinielaForm } from "@/components/QuinielaForm";
 import { getTournament, getUserPredictionMap } from "@/lib/quiniela";
+import { APP_SUBTITLE, formatPoints, scoreFor } from "@/lib/matches";
 
 export default async function HomePage() {
   const session = await auth();
@@ -21,27 +22,30 @@ export default async function HomePage() {
   for (const m of tournament.matches) {
     if (!m.result) continue;
     resolved += 1;
-    if (predictions[m.id] === m.result) points += 1;
+    points += scoreFor(predictions[m.id], m.result);
   }
   const filled = Object.keys(predictions).length;
 
   return (
     <>
       <NavBar />
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main className="mx-auto max-w-2xl px-4 py-6">
         <div className="mb-5">
-          <h1 className="text-2xl font-bold text-slate-900">
+          <p className="text-xs font-semibold uppercase tracking-widest text-pitch">
+            {APP_SUBTITLE}
+          </p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
             {tournament.name}
           </h1>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600">
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600">
             <StatusBadge isClosed={tournament.isClosed} />
             <span>
               {filled}/{tournament.matches.length} pronósticos
             </span>
             {resolved > 0 && (
               <span className="font-semibold text-pitch">
-                {points} {points === 1 ? "punto" : "puntos"} ({resolved}{" "}
-                jugados)
+                {formatPoints(points)} {points === 1 ? "punto" : "puntos"} (
+                {resolved} jugados)
               </span>
             )}
           </div>
@@ -85,16 +89,24 @@ function StatusBadge({ isClosed }: { isClosed: boolean }) {
 
 function Landing() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-b from-emerald-50 to-slate-50 px-4 text-center">
-      <div className="text-6xl">⚽</div>
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Quiniela Mundial</h1>
-        <p className="mt-2 max-w-md text-slate-600">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-7 bg-gradient-to-b from-emerald-50 via-white to-slate-50 px-4 text-center">
+      <div className="text-6xl drop-shadow-sm">⚽</div>
+      <div className="max-w-md">
+        <p className="text-xs font-semibold uppercase tracking-widest text-pitch">
+          {APP_SUBTITLE} · 2026
+        </p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          Hay que revolverle
+        </h1>
+        <p className="mt-3 text-slate-600">
           Llena tus pronósticos de los partidos, guárdalos y compite por el
           primer lugar de la tabla. Inicia sesión para empezar.
         </p>
       </div>
       <SignInButton />
+      <p className="text-xs text-slate-400">
+        1 punto por acertar al ganador · +0.5 si aciertas el penal
+      </p>
     </main>
   );
 }

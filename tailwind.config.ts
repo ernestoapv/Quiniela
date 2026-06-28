@@ -8,6 +8,14 @@ const config: Config = {
         pitch: "#0b6b3a",
         pitchDark: "#075028",
       },
+      fontFamily: {
+        sans: [
+          "var(--font-inter)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+      },
     },
   },
   plugins: [],

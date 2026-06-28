@@ -14,7 +14,7 @@ export default async function AdminPage() {
   return (
     <>
       <NavBar />
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main className="mx-auto max-w-2xl px-4 py-6">
         <h1 className="text-2xl font-bold text-slate-900">Administración</h1>
         <p className="mt-1 text-sm text-slate-600">
           Cierra la quiniela y registra los resultados de los partidos.
@@ -75,18 +75,12 @@ export default async function AdminPage() {
                   <span className="text-slate-400">vs</span>
                   <span>{m.teamB}</span>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <ResultButton
                     matchId={m.id}
                     value="A"
                     label={`Gana ${m.teamA}`}
                     active={m.result === "A"}
-                  />
-                  <ResultButton
-                    matchId={m.id}
-                    value="X"
-                    label="Empate"
-                    active={m.result === "X"}
                   />
                   <ResultButton
                     matchId={m.id}
@@ -96,8 +90,22 @@ export default async function AdminPage() {
                   />
                   <ResultButton
                     matchId={m.id}
+                    value="AP"
+                    label={`${m.teamA} en penales`}
+                    active={m.result === "AP"}
+                  />
+                  <ResultButton
+                    matchId={m.id}
+                    value="BP"
+                    label={`${m.teamB} en penales`}
+                    active={m.result === "BP"}
+                  />
+                </div>
+                <div className="mt-2">
+                  <ResultButton
+                    matchId={m.id}
                     value=""
-                    label="Limpiar"
+                    label="Limpiar resultado"
                     active={!m.result}
                     muted
                   />

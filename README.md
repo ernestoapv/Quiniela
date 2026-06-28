@@ -7,15 +7,22 @@ partidos.
 
 ## Cómo funciona
 
-- **Usuarios** inician sesión con Google y marcan, para cada partido, si gana el
-  equipo A, gana el equipo B o hay empate. Pueden editar mientras la quiniela
-  esté **abierta**.
+- **Usuarios** inician sesión con Google y marcan, para cada partido, una de
+  cuatro opciones (es eliminación, siempre hay un ganador):
+  - **Gana A** / **Gana B** (en tiempo regular)
+  - **Gana A en penales** / **Gana B en penales** (después de empate)
+
+  Pueden editar mientras la quiniela esté **abierta**.
 - **Administrador** (definido por correo en `ADMIN_EMAILS`) puede:
   - **Cerrar** la quiniela → los usuarios ya no pueden modificar sus
     pronósticos.
-  - **Registrar el resultado** real de cada partido.
-- **Tabla de posiciones**: se calcula automáticamente, **1 punto por acierto**
-  (igual que el Excel original).
+  - **Registrar el resultado** real de cada partido (incluyendo si se definió
+    en penales).
+- **Tabla de posiciones** automática:
+  - **1 punto** por acertar al equipo ganador (sin importar cómo).
+  - **+0.5 puntos** adicionales (desempate) si marcaste la opción
+    *"gana en penales"* y el partido efectivamente se definió en penales con ese
+    equipo ganando.
 
 ## Stack
 
