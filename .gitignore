@@ -37,3 +37,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# legacy-nextjs (versión anterior conservada)
+legacy-nextjs/node_modules
+legacy-nextjs/.next
+legacy-nextjs/.prisma-engines
+legacy-nextjs/prisma/dev.db
+legacy-nextjs/.env

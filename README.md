@@ -1,111 +1,115 @@
-# Quiniela Mundial ⚽
+# Hay que revolverle — Quiniela 2026 ⚽
 
-Aplicación web para llenar la quiniela del Mundial, guardar los pronósticos y
-consultar la tabla de posiciones. Los usuarios entran con **Google Sign-In** y
-un **administrador** cierra la quiniela y registra los resultados de los
-partidos.
+Quiniela del Mundial con **todo el bracket** (16avos → octavos → cuartos →
+semifinales → 3er lugar → final). Los participantes entran con **Google**,
+pronostican cada etapa, y los **ganadores avanzan solos** a la siguiente llave
+cuando el administrador registra los resultados. La tabla de posiciones acumula
+los puntos de todo el torneo.
+
+Pensada para **hosting compartido (Hostinger, WordPress, etc.)**:
+
+- **Frontend estático** (HTML/CSS/JS) → se sube tal cual a `public_html`. Sin
+  Node, sin build.
+- **Backend en Google Apps Script** (gratis) → guarda todo en una **Hoja de
+  Google** y verifica el login.
+- **Google Sheets** como base de datos: puedes abrir la hoja y ver/editar todo.
+
+```
+site/                Frontend para subir a Hostinger (public_html)
+  index.html
+  styles.css
+  app.js
+  config.js          ← editas 2 valores aquí
+apps-script/
+  Code.gs            Backend (se pega en Apps Script)
+  appsscript.json    Permisos del proyecto
+legacy-nextjs/       Versión anterior en Next.js (no se usa; se conserva)
+```
 
 ## Cómo funciona
 
-- **Usuarios** inician sesión con Google y marcan, para cada partido, una de
-  cuatro opciones (es eliminación, siempre hay un ganador):
-  - **Gana A** / **Gana B** (en tiempo regular)
-  - **Gana A en penales** / **Gana B en penales** (después de empate)
+- Cada **etapa** se abre/cierra por separado desde el panel de **Admin**.
+- Los usuarios marcan, por partido, una de 4 opciones: **Gana A**, **Gana B**,
+  **Gana A en penales**, **Gana B en penales** (es eliminación: siempre hay
+  ganador).
+- El **admin** registra el resultado real de cada partido. Al hacerlo, el equipo
+  ganador **aparece automáticamente** en su lugar de la siguiente ronda.
+- **Puntos** (acumulados en todo el torneo):
+  - **1 punto** por acertar al equipo ganador.
+  - **+0.5** adicional si marcaste *"en penales"* y el partido efectivamente se
+    definió en penales con ese equipo.
 
-  Pueden editar mientras la quiniela esté **abierta**.
-- **Administrador** (definido por correo en `ADMIN_EMAILS`) puede:
-  - **Cerrar** la quiniela → los usuarios ya no pueden modificar sus
-    pronósticos.
-  - **Registrar el resultado** real de cada partido (incluyendo si se definió
-    en penales).
-- **Tabla de posiciones** automática:
-  - **1 punto** por acertar al equipo ganador (sin importar cómo).
-  - **+0.5 puntos** adicionales (desempate) si marcaste la opción
-    *"gana en penales"* y el partido efectivamente se definió en penales con ese
-    equipo ganando.
+## Puesta en marcha (paso a paso)
 
-## Stack
+### 1. Crea la Hoja de Google y el backend
+1. Crea una **Hoja de Google** nueva (será tu base de datos).
+2. En la hoja: **Extensiones → Apps Script**.
+3. Borra el contenido y **pega `apps-script/Code.gs`**. (Opcional: en el ⚙️
+   "Configuración del proyecto" activa "Mostrar `appsscript.json`" y pega
+   `apps-script/appsscript.json`.)
+4. Arriba del archivo, ajusta:
+   - `CLIENT_ID` → tu Google Client ID (lo creas en el paso 2).
+   - `ADMIN_EMAILS` → tu correo (ej. `ernesto@agency.lat`).
+5. Ejecuta una vez la función **`setup`** (selecciónala y pulsa *Ejecutar*).
+   Autoriza los permisos cuando lo pida. Esto crea las pestañas y los partidos.
+6. **Implementar → Nueva implementación → tipo "Aplicación web"**:
+   - *Ejecutar como:* **Yo**.
+   - *Quién tiene acceso:* **Cualquier persona**.
+   - Implementa y **copia la URL** (termina en `/exec`).
 
-- [Next.js 14](https://nextjs.org) (App Router) + TypeScript
-- [Auth.js / NextAuth v5](https://authjs.dev) con proveedor Google
-- [Prisma](https://www.prisma.io) + PostgreSQL (local y producción)
-- Tailwind CSS
+### 2. Crea el Google Client ID (para el botón de login)
+1. [Google Cloud Console](https://console.cloud.google.com/) → *APIs &
+   Services* → *Credentials*.
+2. Configura la **OAuth consent screen** (External; agrega tu correo en *Test
+   users* o publica la app).
+3. *Create Credentials* → **OAuth client ID** → **Web application**.
+4. En **Authorized JavaScript origins** agrega tu dominio de Hostinger
+   (ej. `https://tudominio.com`) y, para pruebas, `http://localhost:8080`.
+5. Copia el **Client ID** (termina en `.apps.googleusercontent.com`). Úsalo en
+   `CLIENT_ID` del paso 1.4 **y** en `config.js` (paso 3).
 
-## Puesta en marcha (local)
+> Para Google Sign-In **no** necesitas el Client Secret ni redirect URIs; basta
+> el Client ID y los orígenes autorizados.
+
+### 3. Configura el frontend
+Edita **`site/config.js`** con tus dos valores:
+
+```js
+window.QUINIELA_CONFIG = {
+  GAS_URL: "https://script.google.com/macros/s/XXXX/exec",
+  GOOGLE_CLIENT_ID: "XXXX.apps.googleusercontent.com",
+};
+```
+
+### 4. Sube a Hostinger
+1. En hPanel → **Administrador de archivos** → entra a `public_html`.
+2. Sube el **contenido de la carpeta `site/`** (index.html, styles.css, app.js,
+   config.js).
+3. Asegúrate de que el dominio use **HTTPS** (Google Sign-In lo requiere).
+4. Abre tu dominio: entra con Google y a jugar.
+
+## Uso (administrador)
+
+1. **16avos** está abierta por defecto: la gente pronostica.
+2. Cuando empiecen los partidos, en **Admin** cierra la etapa (para congelar
+   pronósticos) y ve **registrando los resultados**.
+3. Al registrar resultados, los ganadores llenan **octavos** automáticamente.
+4. **Abre octavos** para que pronostiquen, y repite hasta la final.
+
+## Probar en local (opcional)
+
+Como es estático, cualquier servidor sirve. Por ejemplo:
 
 ```bash
-# 1. Instalar dependencias
-npm install
-
-# 2. Variables de entorno
-cp .env.example .env
-#   - Genera AUTH_SECRET:  openssl rand -base64 32
-#   - Pon tus credenciales de Google OAuth (ver abajo)
-#   - Ajusta ADMIN_EMAILS con tu correo
-#   - DATABASE_URL: usa Neon (igual que producción) o un Postgres local
-
-# 3a. (Opcional) Postgres local efímero, sin instalar nada extra:
-npm run db:local
-#     y deja en .env:
-#     DATABASE_URL="postgresql://postgres@127.0.0.1:5433/quiniela?schema=public"
-
-# 3b. Crear las tablas y cargar los 16 partidos
-npx prisma migrate deploy   # aplica las migraciones
-npm run db:seed             # carga los partidos (opcional: se crean solos)
-
-# 4. Arrancar
-npm run dev
-# → http://localhost:3000
+cd site
+python3 -m http.server 8080
+# abre http://localhost:8080  (agrega ese origen en el Client ID)
 ```
 
-> La primera vez que se abre la app también se crean los partidos
-> automáticamente si la base está vacía, así que `db:seed` es opcional.
+## Datos en la Hoja
 
-## Credenciales de Google OAuth
+- **Config**: nombre del torneo y qué etapas están abiertas.
+- **Partidos**: los 32 partidos del bracket (orden, etapa, equipos, resultado).
+- **Pronosticos**: una fila por participante con sus elecciones.
 
-1. Entra a [Google Cloud Console](https://console.cloud.google.com/) →
-   *APIs & Services* → *Credentials*.
-2. *Create Credentials* → *OAuth client ID* → tipo **Web application**.
-3. En **Authorized redirect URIs** agrega:
-   - `http://localhost:3000/api/auth/callback/google` (desarrollo)
-   - `https://TU-DOMINIO/api/auth/callback/google` (producción)
-4. Copia el *Client ID* y *Client Secret* a `AUTH_GOOGLE_ID` y
-   `AUTH_GOOGLE_SECRET` en tu `.env`.
-
-## Despliegue en Vercel
-
-La base ya es PostgreSQL, así que el despliegue es directo.
-
-1. **Crea la base Postgres.** En [Neon](https://neon.tech) (gratis) crea un
-   proyecto y copia la *connection string* (la que termina en `?sslmode=require`).
-2. **Importa el repo en [Vercel](https://vercel.com)** (New Project → tu repo de
-   GitHub). Vercel detecta Next.js automáticamente.
-3. **Define las variables de entorno** en Vercel (Project → Settings →
-   Environment Variables):
-   - `DATABASE_URL` → la cadena de Neon
-   - `AUTH_SECRET` → `openssl rand -base64 32`
-   - `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` → credenciales de Google
-   - `ADMIN_EMAILS` → tu correo (ej. `ernesto@agency.lat`)
-   - `AUTH_TRUST_HOST` → `true`
-4. **Deploy.** El comando `build` corre `prisma migrate deploy` y crea las
-   tablas en Neon automáticamente. Los 16 partidos se cargan solos en la
-   primera visita.
-5. **Actualiza el redirect URI de Google** con tu dominio de Vercel:
-   `https://TU-APP.vercel.app/api/auth/callback/google`.
-
-> Local y producción usan el mismo motor (Postgres), por lo que no hay que
-> cambiar nada del esquema entre uno y otro.
-
-## Estructura
-
-```
-prisma/schema.prisma        Modelos (User, Match, Prediction, Tournament…)
-prisma/seed.ts              Carga los 16 partidos
-src/auth.ts                 Configuración de Auth.js (Google)
-src/lib/matches.ts          Lista de partidos del Mundial
-src/lib/quiniela.ts         Lógica de datos y tabla de posiciones
-src/app/actions.ts          Server actions (guardar, cerrar, resultados)
-src/app/page.tsx            Pantalla principal: llenar la quiniela
-src/app/posiciones/         Tabla de posiciones
-src/app/admin/              Panel del administrador
-```
+Puedes editar a mano si hace falta; la app lo lee directo.
